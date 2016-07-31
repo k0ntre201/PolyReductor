@@ -7,6 +7,7 @@
 #include <assimp\scene.h>
 #include <glm\glm.hpp>
 #include <memory>
+#include "OpenGLLibaries.h"
 
 namespace PolyReductor
 {
@@ -57,17 +58,45 @@ namespace PolyReductor
 			void loadModel(const std::string& modelName);
 			void saveModel(const std::string& modelName);
 
-			void draw();
+			void prepareModelToDraw();
+
+
+			void draw(GLuint shaderProgram, const glm::mat4& M, const glm::mat4& V, const glm::mat4& P);
+
+			void deleteBUffers();
 
 		protected:
 		private://methods
 			void addNeigbhod(std::shared_ptr<Vertex> v, std::shared_ptr<Vertex> neighbor);
 			std::shared_ptr<Triangle> addTriangle(int v1, int v2, int v3);
 
+			void prepareVertices();
+			void prepareNormals();
+			void prepareIndices();
+
+
+			template<typename T>
+			void generateBuffer(const std::unique_ptr<T[]>& v, int vboType)
+			{
+				glGenBuffers(1, &vbos[vboType]);
+				glBindBuffer(GL_ARRAY_BUFFER, vbos[vboType]);
+				glBufferData(GL_ARRAY_BUFFER, sizeOfBuffer*sizeof(T), v.get(), GL_STATIC_DRAW);
+					
+				glVertexAttribPointer(vboType, sizeof(T) / sizeof(float), GL_FLOAT, GL_FALSE, 0, NULL);
+				glEnableVertexAttribArray(vboType);
+			}
 
 		private:
 			std::vector<std::shared_ptr<Vertex>> vertices;
 			std::vector<std::shared_ptr<Triangle>> triangles;
+			std::unique_ptr<glm::vec3[]> positionSForDrawing;
+			std::unique_ptr<glm::vec3[]> normalsForDrawing;
+			std::unique_ptr<GLuint[]> indicesForDrawing;
+
+			int sizeOfBuffer;
+
+			GLuint vbos[3];
+			GLuint vao;
 		};
 	}
 }
