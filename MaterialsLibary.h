@@ -3,6 +3,11 @@
 
 #include <glm\glm.hpp>
 
+/*
+ *In this fule we have a interface to materials. Implementation for all of 24 materials are in MaterialsLibary.cpp. 
+ *Names from MaterialType enumetrators are this same like in table of materials.
+*/
+
 namespace PolyReductor
 {
 	namespace Renderer
@@ -42,7 +47,7 @@ namespace PolyReductor
 			NUMBER_OF_MATERIALS_TYPE
 		};
 
-		Material getMaterial(MaterialType type);
+		Material getMaterial(MaterialType type);/*Get material from teble of materials. Table is in implementation file.*/
 
 
 	}

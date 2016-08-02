@@ -9,14 +9,20 @@
 #include <memory>
 #include "OpenGLLibaries.h"
 
+/*
+ *This is main file. In this place we have all information about this like our object look for. 
+*/
+
 namespace PolyReductor
 {
 	namespace Renderer
 	{
 		class ModelForReduction
 		{
+			/*Protorype of Trangle stricture.*/
 			struct Triangle;
 
+			/*Verstex structure for describe the vertices of model.*/
 			struct Vertex
 			{
 				Vertex(const glm::vec3& pos, int id);
@@ -24,13 +30,14 @@ namespace PolyReductor
 
 				glm::vec3 position;
 				int id;
-				std::vector<std::shared_ptr<Vertex>> neighbor;
-				std::vector<std::shared_ptr<Triangle>> face;
+				std::vector<std::shared_ptr<Vertex>> neighbor; /*Information about neighbor.*/
+				std::vector<std::shared_ptr<Triangle>> face;/*Information about to face wher is actual vertex.*/
 				float cost;
 				std::unique_ptr<Vertex> collapse;
 
 				void RemoveIfNonNeighbor(std::unique_ptr<Vertex> n);
 
+				//operator for compare vertices. This same vertces have this same id.
 				bool operator==(const Vertex& v)
 				{
 					return id == v.id;
@@ -42,6 +49,7 @@ namespace PolyReductor
 				}
 			};
 
+			/*What can i write.... It's... triangle... ...and... triangle has three vertices....*/
 			struct Triangle
 			{
 				Triangle(std::shared_ptr<Vertex> v0, std::shared_ptr<Vertex> v1, std::shared_ptr<Vertex> v2);
@@ -55,26 +63,27 @@ namespace PolyReductor
 		public:
 			ModelForReduction();
 			ModelForReduction(const std::string& modelName);
-			void loadModel(const std::string& modelName);
-			void saveModel(const std::string& modelName);
+			void loadModel(const std::string& modelName); /*Function to load model from file. Using assimp.*/
+			void saveModel(const std::string& modelName);/*This same like above. But in second direction.*/
 
-			void prepareModelToDraw();
+			void prepareModelToDraw();/*This function prepare model to drawing. Copy actual vertex to new buffer and create opengl buffers.*/
 
 
-			void draw(GLuint shaderProgram, const glm::mat4& M, const glm::mat4& V, const glm::mat4& P);
+			void draw(GLuint shaderProgram, const glm::mat4& M, const glm::mat4& V, const glm::mat4& P);/*This function bind actual opengl buffers and draw to graphical buffer what need.*/
 
-			void deleteBUffers();
+			void deleteBUffers();/*Delete actual buffers?*/
 
 		protected:
 		private://methods
-			void addNeigbhod(std::shared_ptr<Vertex> v, std::shared_ptr<Vertex> neighbor);
-			std::shared_ptr<Triangle> addTriangle(int v1, int v2, int v3);
+			void addNeigbhod(std::shared_ptr<Vertex> v, std::shared_ptr<Vertex> neighbor);/*Helper function to read model. For reduction we need informations about neighbor and we must create 3d graph*/
+			std::shared_ptr<Triangle> addTriangle(int v1, int v2, int v3);/*Helepr function to read model. Create triangle with actual indices*/
 
+			/*Three helper functions. In the future they will be made paraller*/
 			void prepareVertices();
 			void prepareNormals();
 			void prepareIndices();
 
-
+			/*To generate a buffer for graphic card*/
 			template<typename T>
 			void generateBuffer(const std::unique_ptr<T[]>& v, int vboType)
 			{

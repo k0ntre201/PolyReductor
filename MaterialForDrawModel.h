@@ -5,6 +5,10 @@
 #include "ShaderGLSL.h"
 #include <memory>
 
+/*
+ *Class for drawing the objec in material from MaterialLibary file.
+ *This class use Shader class from MyEngine namespace. This class is implements by Sylwester Mróz.
+*/
 
 namespace PolyReductor
 {
@@ -15,8 +19,8 @@ namespace PolyReductor
 		public:
 			MaterialForDrawModel();
 
-			void setMaterial(MaterialType type = MaterialType::COPPER);
-			void bindMatrial(const glm::vec3& lightPosition /*the best will be eye position*/, const glm::vec3& eyePosition);
+			void setMaterial(MaterialType type = MaterialType::COPPER);/*Set material type for objecs.*/
+			void bindMatrial(const glm::vec3& lightPosition /*the best will be eye position*/, const glm::vec3& eyePosition);/*bind material, shaders, uniforms variables... Modre in MaterialForDrawModel.cpp file.*/
 
 			GLint getMaterialProgram() { return shaderProgram; }
 

@@ -16,7 +16,7 @@ PolyReductor::Renderer::ModelForReduction::Vertex::~Vertex()
 
 void PolyReductor::Renderer::ModelForReduction::Vertex::RemoveIfNonNeighbor(std::unique_ptr<Vertex> n)
 {
-	//to do
+	//to do. Now i don't now that i need this?
 	for (int i = 0; i < neighbor.size(); ++i)
 	{
 	
@@ -107,10 +107,15 @@ void PolyReductor::Renderer::ModelForReduction::loadModel(const std::string & mo
 
 void PolyReductor::Renderer::ModelForReduction::saveModel(const std::string & modelName)
 {
+	/*to do*/
 }
 
 void PolyReductor::Renderer::ModelForReduction::prepareModelToDraw()
 {
+	/*
+	 *Prepare all what we need to draw model using opengl graphical pipeline
+	 *and generate buffers.
+	*/
 	sizeOfBuffer = vertices.size();
 	positionSForDrawing.reset(new glm::vec3[sizeOfBuffer]);
 	normalsForDrawing.reset(new glm::vec3[sizeOfBuffer]);

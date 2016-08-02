@@ -1,5 +1,10 @@
 #include "MaterialsLibary.h"
 
+/*
+ *Implement 24 materials type. Functon getMaterial do this what has in name....
+ *Valuses of materials are from "..."
+*/
+
 using namespace PolyReductor;
 using namespace Renderer;
 
