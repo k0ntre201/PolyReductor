@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <iostream>
 #include <glm\gtc\type_ptr.hpp>
+#include <glm\gtx\fast_square_root.hpp>
 
 PolyReductor::Renderer::ModelForReduction::Vertex::Vertex(const glm::vec3 & pos, int id):
 	position(pos),
@@ -14,12 +15,63 @@ PolyReductor::Renderer::ModelForReduction::Vertex::~Vertex()
 {
 }
 
-void PolyReductor::Renderer::ModelForReduction::Vertex::RemoveIfNonNeighbor(std::unique_ptr<Vertex> n)
+void PolyReductor::Renderer::ModelForReduction::Vertex::RemoveIfNonNeighbor()
 {
-	//to do. Now i don't now that i need this?
-	for (int i = 0; i < neighbor.size(); ++i)
+	for (auto n : candidate->neighbor)
 	{
-	
+		auto it = std::find_if(neighbor.begin(), neighbor.end(), [&](std::shared_ptr<Vertex> v) { return v->id == n->id; });
+		if (it == neighbor.end() && n->id != id)
+		{
+			neighbor.push_back(n);
+		}
+	}
+	auto candi = std::find_if(neighbor.begin(), neighbor.end(), [&](std::shared_ptr<Vertex> v) { return v->id == candidate->id; });
+	neighbor.erase(candi);
+}
+
+void PolyReductor::Renderer::ModelForReduction::Vertex::calculateNormal()
+{
+	normal = glm::vec3(0.0f);
+	for (const auto f : face)
+	{
+		normal += f->normal;
+	}
+	normal = glm::fastNormalize(normal);
+}
+
+void PolyReductor::Renderer::ModelForReduction::Vertex::calculateCostForDelete()
+{
+	cost = 0.0f;
+
+	int N{ 0 };
+	for (auto n : neighbor)
+	{
+		if (n != nullptr)
+		{
+			cost += glm::dot(normal, n->normal);
+			N++;
+		}
+	}
+
+	if (N > 0)
+	{
+		cost /= N;
+	}
+
+	float candidateCost{ 0.0f };
+	candidate = nullptr;
+
+	for (const auto& n:neighbor)
+	{
+		if (n != nullptr)
+		{
+			float c = (glm::dot(normal, n->normal))/ glm::distance(position, n->position);
+			if (c > candidateCost)
+			{
+				candidateCost = c;
+				candidate = n;
+			}
+		}
 	}
 }
 
@@ -44,14 +96,16 @@ void PolyReductor::Renderer::ModelForReduction::Triangle::computeNormal()
 void PolyReductor::Renderer::ModelForReduction::Triangle::replaceVertex(std::shared_ptr<Vertex> vold, std::shared_ptr<Vertex> vnew)
 {
 	for (int i = 0; i < 3; ++i)
+	{
 		if (vertex[i]->id == vold->id)
 		{
-			std::swap(vertex[i], vnew);
+			vertex[i] = vnew;
 			return;
 		}
+	}
 }
 
-int PolyReductor::Renderer::ModelForReduction::Triangle::hasVertex(std::shared_ptr<Vertex> v)
+bool PolyReductor::Renderer::ModelForReduction::Triangle::hasVertex(std::shared_ptr<Vertex> v)
 {
 	for (int i = 0; i < 3; ++i)
 		if (vertex[i]->id == v->id)
@@ -75,6 +129,8 @@ void PolyReductor::Renderer::ModelForReduction::loadModel(const std::string & mo
 	
 	const aiScene* scene = importer.ReadFile(modelName, aiProcess_Triangulate| aiProcess_JoinIdenticalVertices | aiProcess_SortByPType);
 	const aiMesh* mesh = scene->mMeshes[0];
+
+	std::cout <<"Vertices count "<< mesh->mNumVertices << "\n";
 
 	for (int i = 0; i < mesh->mNumVertices; ++i)
 	{
@@ -107,15 +163,10 @@ void PolyReductor::Renderer::ModelForReduction::loadModel(const std::string & mo
 
 void PolyReductor::Renderer::ModelForReduction::saveModel(const std::string & modelName)
 {
-	/*to do*/
 }
 
 void PolyReductor::Renderer::ModelForReduction::prepareModelToDraw()
 {
-	/*
-	 *Prepare all what we need to draw model using opengl graphical pipeline
-	 *and generate buffers.
-	*/
 	sizeOfBuffer = vertices.size();
 	positionSForDrawing.reset(new glm::vec3[sizeOfBuffer]);
 	normalsForDrawing.reset(new glm::vec3[sizeOfBuffer]);
@@ -142,6 +193,14 @@ void PolyReductor::Renderer::ModelForReduction::prepareModelToDraw()
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindVertexArray(0);
+}
+
+void PolyReductor::Renderer::ModelForReduction::reduce(int numberOfVertices)
+{
+	while (vertices.size() > numberOfVertices)
+	{
+		removeVertex();
+	}
 }
 
 void PolyReductor::Renderer::ModelForReduction::draw(GLuint shaderProgram, const glm::mat4& M,const glm::mat4& V, const glm::mat4& P)
@@ -226,7 +285,7 @@ void PolyReductor::Renderer::ModelForReduction::prepareNormals()
 			normalsForDrawing[t->vertex[i]->id] += t->normal;
 	}
 	for (int i = 0; i < vertices.size(); ++i)
-		normalsForDrawing[i] = glm::normalize(normalsForDrawing[i]);
+		normalsForDrawing[i] = glm::fastNormalize(normalsForDrawing[i]);
 }
 
 void PolyReductor::Renderer::ModelForReduction::prepareIndices()
@@ -236,4 +295,142 @@ void PolyReductor::Renderer::ModelForReduction::prepareIndices()
 		for (int j = 0; j < 3;++j)
 			indicesForDrawing[3 * i + j] = triangles[i]->vertex[j]->id;
 	}
+}
+
+void PolyReductor::Renderer::ModelForReduction::calculateCostForVertices()
+{
+	for (auto v : vertices)
+	{
+		v->calculateNormal();
+	}
+
+	for (auto v : vertices)
+	{
+		v->calculateCostForDelete();
+	}
+}
+
+void PolyReductor::Renderer::ModelForReduction::findCandidate()
+{
+	float cost{ 0.0f };
+	for (auto v : vertices)
+	{
+		if (v->cost > cost)
+		{
+			//std::cout << "Found. what is problem?\n";
+			cost = v->cost;
+			forRemove = v;
+		}
+	}
+}
+
+void PolyReductor::Renderer::ModelForReduction::removeVertex()
+{
+	std::cout << "Remove " << vertices.size() << "\n";
+	calculateCostForVertices();
+	findCandidate();
+	//Vertex is deleting from list of all vertices
+	/*auto remVer = std::find_if(std::begin(vertices), std::end(vertices), [&](std::shared_ptr<Vertex> v) { return v->id == forRemove->id; });
+	if (remVer != std::end(vertices))
+	{
+		vertices.erase(remVer);
+	}*/
+
+	vertices.erase(vertices.begin() + forRemove->id);
+
+	//All neighbor has deleting vertex, and we must delete it from list of neighbor vertices.
+	for (auto n : forRemove->neighbor)
+	{
+
+		auto remNeigbor = std::find_if(std::begin(n->neighbor), std::end(n->neighbor), [&](std::shared_ptr<Vertex> v) {return v->id == forRemove->id; });
+		if (remNeigbor != std::end(n->neighbor))
+		{
+			//if(n->id == forRemove->candidate->id)
+				//std::cout << "Would erase\n";
+			n->neighbor.erase(remNeigbor);
+		}
+	}
+
+	/*auto remNeigbor = std::find_if(std::begin(forRemove->candidate->neighbor), std::end(forRemove->candidate->neighbor), [&](std::shared_ptr<Vertex> v) {return v->id == forRemove->id; });
+	if (remNeigbor != std::end(forRemove->candidate->neighbor))
+	{
+		//if(n->id == forRemove->candidate->id)
+		//std::cout << "Would erase\n";
+		forRemove->candidate->neighbor.erase(remNeigbor);
+	}*/
+
+	//Trianges are containing deleting vertex are erasing.
+	while (true)
+	{
+		auto remTri = std::find_if(std::begin(triangles), std::end(triangles), [&](std::shared_ptr<Triangle> t) { return (t->hasVertex(forRemove) && t->hasVertex(forRemove->candidate)); });
+		if (remTri == std::end(triangles))
+		{
+			break;
+		}
+		else
+		{
+			triangles.erase(remTri);
+		}
+	}
+
+	//Localy erase triangles for all neighbor of deleting vertex
+	for (auto n : forRemove->neighbor)
+	{
+		while (true)
+		{
+			auto remTriangleNeighbor = std::find_if(std::begin(n->face), std::end(n->face), [&](std::shared_ptr<Triangle> t) { return (t->hasVertex(forRemove) && t->hasVertex(forRemove->candidate)); });
+			if (remTriangleNeighbor == std::end(n->face))
+			{
+				break;
+			}
+			else
+			{
+				n->face.erase(remTriangleNeighbor);
+			}
+		}
+	}
+
+	/*while (true)
+	{
+		auto remTriangleNeighbor = std::find_if(std::begin(forRemove->candidate->face), std::end(forRemove->candidate->face), [&](std::shared_ptr<Triangle> t) { return (t->hasVertex(forRemove) && t->hasVertex(forRemove->candidate)); });
+		if (remTriangleNeighbor == std::end(forRemove->candidate->face))
+		{
+			break;
+		}
+		else
+		{
+			forRemove->candidate->face.erase(remTriangleNeighbor);
+		}
+	}*/
+
+	//Candidate get neighbors of removed vertex
+	//std::vector<std::shared_ptr<Vertex>> tempVertex;
+	for (auto n : forRemove->neighbor)
+	{
+		auto addNeig = std::find_if(std::begin(forRemove->candidate->neighbor), std::end(forRemove->candidate->neighbor), [&](std::shared_ptr<Vertex> v) { return v->id == n->id; });
+		if (addNeig == std::end(forRemove->candidate->neighbor) && n->id != forRemove->id)
+		{
+			//forRemove->candidate->neighbor.push_back(n); //<---- problem with increment iterator, but i need this.... please....
+			//tempVertex.push_back(n);
+		}
+	}
+	while (true)
+	{
+		auto replVer = std::find_if(std::begin(triangles), std::end(triangles), [&](std::shared_ptr<Triangle> t) { return t->hasVertex(forRemove); });
+		if (replVer == std::end(triangles))
+		{
+			break;
+		}
+		else
+		{
+			(*replVer)->replaceVertex(forRemove, forRemove->candidate);
+		}
+	}
+	
+	for (int i = 0; i < vertices.size(); ++i)
+	{
+		vertices[i]->id = i;
+	}
+
+	
 }
