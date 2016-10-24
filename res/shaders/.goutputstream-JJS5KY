@@ -1,0 +1,68 @@
+#version 450 core
+
+#define POSITION 0
+#define TEXTURECOORD 1
+#define NORMAL 2
+#define TANGENT 3
+#define BITANGENT 4
+
+layout(location = POSITION) in vec3 inPosition;
+layout(location = TEXTURECOORD) in vec2 inTextureCoordinates;
+layout(location = NORMAL) in vec3 inNormal;
+layout(location = TANGENT) in vec3 inTangent;
+layout(location = BITANGENT) in vec3 inBitangent;
+
+uniform vec3 inLightPosition;
+uniform vec3 inEyePosition;
+
+uniform mat4 MVP;
+uniform mat3 normalMatrix;
+uniform mat4 shadowTextureMatrix;
+
+uniform int inIsLeaf;
+
+//now we have variables for fragment shader
+
+out vec4 position;
+out vec3 normal;
+out vec2 textureCoord;
+
+out mat3 TBN;
+
+out vec4 shadowTextureCoordinates;
+
+out vec3 lightDirection;
+out vec3 eyeDirection;
+
+out int isLeaf;
+
+
+/*
+	NOW HERE WILL BE VARIABLES FOR ANIMATE TREE
+*/
+
+void main()
+{
+	position = MVP*vec4(inPosition,1.0);
+	normal = normalMatrix*inNormal;
+	textureCoord = inTextureCoordinates;
+	shadowTextureCoordinates = shadowTextureMatrix*shadowTextureMatrix*vec4(inPosition,1.0f);
+	vec3 tangent = normalMatrix*inTangent;
+	vec3 bitangent = normalMatrix*inBitangent;
+
+	tangent = normalize(tangent - dot(tangent,normal)*normal);
+
+	bitangent = cross(tangent,normal);
+	
+	TBN = transpose(mat3(tangent,bitangent,normal));
+
+	lightDirection = TBN*(inLightPosition - position.xyz);
+	eyeDirection = TBN*(inEyePosition - position.xyz);
+
+	isLeaf = inIsLeaf;
+	/*
+		NOw HERE WILL BE CODE FOR ANIMATE TREE
+	*/
+
+	gl_Position = position;
+}

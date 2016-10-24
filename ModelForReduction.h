@@ -8,6 +8,9 @@
 #include <glm\glm.hpp>
 #include <memory>
 #include "OpenGLLibaries.h"
+#include "MyVertex.h"
+#include "Histograms.h"
+
 
 namespace PolyReductor
 {
@@ -25,8 +28,8 @@ namespace PolyReductor
 				glm::vec3 position;
 				glm::vec3 normal;
 				int id;
-				std::vector<std::shared_ptr<Vertex>> neighbor;
-				std::vector<std::shared_ptr<Triangle>> face;
+				MyVector<std::shared_ptr<Vertex>> neighbor;
+				MyVector<std::shared_ptr<Triangle>> face;
 				float cost;
 				std::shared_ptr<Vertex> candidate;
 
@@ -84,9 +87,11 @@ namespace PolyReductor
 			void prepareModelToDraw();
 
 			void reduce(int numberOfVertices);
-
-
 			void draw(GLuint shaderProgram, const glm::mat4& M, const glm::mat4& V, const glm::mat4& P);
+
+			void createHistograms(GLuint shaderProgram, std::shared_ptr<MyEngine::Renderer::Transform> transform, const glm::mat4& V, const glm::mat4& P, int width, int height);
+
+			Histograms getHistograms();
 
 			void deleteBUffers();
 
@@ -116,6 +121,9 @@ namespace PolyReductor
 			void findCandidate();
 			void removeVertex();
 
+			void searchOnAllVerices();
+			void searchOnLocalVerices();
+
 
 		private:
 			std::vector<std::shared_ptr<Vertex>> vertices;
@@ -124,11 +132,17 @@ namespace PolyReductor
 			std::unique_ptr<glm::vec3[]> normalsForDrawing;
 			std::unique_ptr<GLuint[]> indicesForDrawing;
 			std::shared_ptr<Vertex> forRemove;
+			std::shared_ptr<Vertex> prevForRemove;
+			Histograms histograms;
 
 			int sizeOfBuffer;
 
 			GLuint vbos[3];
 			GLuint vao;
+
+			bool firstVertex;
+
+			float cost = 0.0f;
 		};
 	}
 }

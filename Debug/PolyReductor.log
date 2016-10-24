@@ -1,0 +1,20 @@
+﻿  OpenGLEngine.cpp
+d:\sylwek\polyreductor\modelforreduction.h(71): warning C4553: '==': operator has no effect; did you intend '='?
+d:\sylwek\polyreductor\modelforreduction.h(73): warning C4553: '==': operator has no effect; did you intend '='?
+d:\sylwek\polyreductor\modelforreduction.h(75): warning C4553: '==': operator has no effect; did you intend '='?
+d:\sylwek\polyreductor\mouseglfw.h(48): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  d:\sylwek\polyreductor\openglengine.cpp(131): note: see reference to function template instantiation 'T MyEngine::Device::MouseGlfw::getCursorPosition<glm::ivec2>(void)' being compiled
+          with
+          [
+              T=glm::ivec2
+          ]
+d:\sylwek\polyreductor\mouseglfw.h(49): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\sylwek\polyreductor\mouseglfw.h(39): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  d:\sylwek\polyreductor\openglengine.cpp(144): note: see reference to function template instantiation 'void MyEngine::Device::MouseGlfw::setCursorPosition<glm::ivec2>(const T &)' being compiled
+          with
+          [
+              T=glm::ivec2
+          ]
+d:\sylwek\polyreductor\mouseglfw.h(40): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+  PolyReductor.vcxproj -> D:\Sylwek\PolyReductor\Debug\PolyReductor.exe
+  PolyReductor.vcxproj -> D:\Sylwek\PolyReductor\Debug\PolyReductor.pdb (Partial PDB)

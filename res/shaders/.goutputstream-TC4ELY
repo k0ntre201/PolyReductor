@@ -1,0 +1,34 @@
+#verison 450 core
+
+struct Material
+{
+	vec3 ambient;
+	vec3 diffuse;
+	vec3 specular;
+	float shiness;
+};
+
+in vec3 position;
+in vec3 normal;
+
+uniform Material material;
+uniform vec3 lightPosition;
+uniform vec3 eyePosition;
+
+out vec4 color;
+
+int main()
+{
+	vec3 lightDirection = normalize(position - lightPosition);
+	vec3 eyeDirection = normalize(position - eyePosition);
+	float NdotL = dot(lightDirection,normal);
+	color = material.ambient;
+	if(NdotL > 0.0)
+	{
+		vec3 diffuse = material.diffuse * NdotL;
+		vec3 H = normalMatrix(eyeDirection + lightDirection);
+		float NdotH = dot(normal, H);
+		vec3 specular = material.specular*(
+	}
+	
+}
