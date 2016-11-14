@@ -1,3 +1,7 @@
+/*
+Interface of mouse class. All generic functions must will be overrided.
+*/
+
 #ifndef MOUSE_H
 #define MOUSE_H
 

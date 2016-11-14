@@ -1,3 +1,6 @@
+/*
+File contain only opengl headers
+*/
 #ifndef OPENGLLIBARIES
 #define OPENGLLIBARIES
 

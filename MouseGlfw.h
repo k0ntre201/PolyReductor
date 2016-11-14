@@ -1,3 +1,8 @@
+/*
+This is imlementaition of mouse class. This class use GLFW3 library to impement functionaly of this class.
+Generic fuctions must use type where constructor two arguments are taken - osiition x and y of mouse cursor.
+*/
+
 #ifndef MOUSEGLFW_H
 #define MOUSEGLFW_H
 

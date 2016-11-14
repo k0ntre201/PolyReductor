@@ -1,3 +1,8 @@
+/*
+Class with impemetation of Engine interface using OpenGL library.
+
+*/
+
 #ifndef OPENGLENGINE_H
 #define OPENGLENGINE_H
 
@@ -8,6 +13,9 @@
 #include "Transform.h"
 
 //model reduction system
+/*
+Implementation of engine interface
+*/
 #include "ModelForReduction.h"
 #include "MaterialForDrawModel.h"
 
@@ -18,7 +26,7 @@ namespace MyEngine
 	public:
 		OpenGLEngine();
 		virtual ~OpenGLEngine();
-		void run();
+		void run();//has while loop
 		void initializeFramework();
 	private:
 		glm::ivec2 getMousePosition();
@@ -33,7 +41,7 @@ namespace MyEngine
 		std::shared_ptr<MyEngine::Renderer::Camera> camera;
 		std::shared_ptr<MyEngine::Renderer::ShaderGlsl> shader;
 		std::shared_ptr<MyEngine::Renderer::Transform> transform;
-		int width, height;
+		int width, height;//size of viewport
 
 		float dt;
 

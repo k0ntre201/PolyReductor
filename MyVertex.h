@@ -1,3 +1,8 @@
+/*
+Container class specific for PolyReductor system.
+This class use vector and deliver specific interface for PolyReductor system.
+*/
+
 #ifndef MY_VECTOR
 #define MY_VECTOR
 
@@ -96,6 +101,7 @@ public:
 		}*/
 	}
 
+	/*erase element if exist in contener. If non exist then nothing is done*/
 	template<typename F>
 	void eraseElement(F comparator)
 	{

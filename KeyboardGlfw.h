@@ -1,3 +1,7 @@
+/*
+Implementation of keyboard interface basic on GLFW3 library.
+*/
+
 #ifndef KEYBOARD_GLFW_H
 #define KEYBOARD_GLFW_H
 

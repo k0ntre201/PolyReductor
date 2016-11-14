@@ -1,3 +1,7 @@
+/*
+Component for histogram contener.
+*/
+
 #ifndef HISTOGRAMS_H
 #define HISTOGRAMS_H
 
@@ -10,9 +14,10 @@
 
 struct Histograms
 {
-	std::array<cv::MatND, 16> histograms;
+	std::array<cv::MatND, 16> histograms;//contain 16 histograms. For all posibly directions
 };
 
+/*get two histograms to compare. Return simillarity value*/
 float compareHistograms(const Histograms& h1, const Histograms& h2);
 
 #endif // !HISTOGRAMS_H

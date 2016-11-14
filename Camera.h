@@ -4,6 +4,11 @@
 #include <glm\glm.hpp>
 #include <glm\gtc\quaternion.hpp>
 
+/*
+Class of camera responsible of good quality of printed models to monitor.
+Contain view and perspective matrices.
+*/
+
 namespace MyEngine
 {
 	namespace Renderer
@@ -11,9 +16,19 @@ namespace MyEngine
 		class Camera
 		{
 		public:
+			/*Constructor. Get:
+			pos: position, where camera is.
+			target: place, where camera look at
+			aspectRatio: aspect of width and heigh of viewport
+			FOV: field of view
+			zNear: how near some object will be noticed by camera
+			zFar: how far some object will be noticed by camera
+			UP: up vector to hit the camera.
+			*/
 			Camera(const glm::vec3& pos, const glm::vec3& target, float aspectRatio, float FOV, float zNear, float zFar, glm::vec3 UP = glm::vec3(0.0f, 1.0f, 0.0f));
 			virtual ~Camera();
 			const glm::mat4& getViewMatrix();
+			
 			const glm::mat4& getProjectionMatrix();
 			const glm::mat4& getViewProjectionMatrix();
 			void moveForward(float dt);
@@ -27,7 +42,6 @@ namespace MyEngine
 			void setSpeed(float s);
 			void addYaw(float yawOffsed);
 			void addPitch(float pithOffsed);
-
 			void update();
 
 		private:

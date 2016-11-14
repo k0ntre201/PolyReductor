@@ -279,6 +279,10 @@ void PolyReductor::Renderer::ModelForReduction::draw(GLuint shaderProgram, const
 
 void PolyReductor::Renderer::ModelForReduction::createHistograms(GLuint shaderProgram, std::shared_ptr<MyEngine::Renderer::Transform> transform, const glm::mat4 & V, const glm::mat4 & P,int width,int height)
 {
+	/*
+	Create histograms from buffer of showed model.
+	Model are rotating to make image from all direction.
+	*/
 	std::vector<glm::vec3> rotates;
 	for (int i = 0; i < 8; ++i)
 	{
@@ -302,22 +306,52 @@ void PolyReductor::Renderer::ModelForReduction::createHistograms(GLuint shaderPr
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		draw(shaderProgram, m, V, P);
 		glReadBuffer(GL_BACK_LEFT);
-		glReadPixels(0, 0, width, height, GL_BGR, GL_UNSIGNED_BYTE, buffer.get());
-		cv::Mat image(height, width, CV_8UC3, buffer.get());
-		cv::Mat hsvImage;
-		cv::cvtColor(image, hsvImage, CV_BGR2HSV);
+		glReadPixels(0, 0, width, height, GL_BGR, GL_UNSIGNED_BYTE, buffer.get());//read buffer
+		cv::Mat image(height, width, CV_8UC3, buffer.get());//crete image from buffer
+		/*cv::Mat hsvImage;
+		cv::cvtColor(image, hsvImage, CV_BGR2HSV);//convert rgb to hsv
 		int h_bins = 50;
 		int s_bins = 60;
 		int histSise[] = { h_bins,s_bins };
-		float h_ranges[] = { 0,180 };
-		float s_ranges[] = { 0,256 };
+		float h_ranges[] = { 1,180 };
+		float s_ranges[] = { 1,256 };
 		const float* ranges[] = { h_ranges,s_ranges };
 		int channels[] = { 0,1 };
 
 		cv::MatND hist;
 		cv::calcHist(&hsvImage, 1, channels, cv::Mat(), hist, 2, histSise, ranges, true, false);
+		
 		cv::normalize(hist, hist, 0, 1, cv::NORM_MINMAX, -1, cv::Mat());
-		histograms.histograms[i] = hist;
+		histograms.histograms[i] = hist;*/
+
+
+		std::vector<cv::Mat> bgr_planes;
+		cv::split(image, bgr_planes);
+		float range[] = { 20, 256 };
+		const float* histRange = { range };
+
+		bool uniform = true; bool accumulate = false;
+
+		cv::Mat b_hist, g_hist, r_hist;
+		int histSize = 236;
+
+		/// Compute the histograms:
+		cv::calcHist(&bgr_planes[0], 1, 0, cv::Mat(), b_hist, 1, &histSize, &histRange, uniform, accumulate);
+		cv::calcHist(&bgr_planes[1], 1, 0, cv::Mat(), g_hist, 1, &histSize, &histRange, uniform, accumulate);
+		cv::calcHist(&bgr_planes[2], 1, 0, cv::Mat(), r_hist, 1, &histSize, &histRange, uniform, accumulate);
+
+		// Draw the histograms for B, G and R
+		int hist_w = 512; int hist_h = 400;
+		int bin_w = cvRound((double)hist_w / histSize);
+
+		cv::Mat histImage(hist_h, hist_w, CV_8UC3, cv::Scalar(0, 0, 0));
+
+		/// Normalize the result to [ 0, histImage.rows ]
+		cv::normalize(b_hist, b_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat());
+		cv::normalize(g_hist, g_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv::Mat());
+		cv::normalize(r_hist, r_hist, 0, histImage.rows, cv::NORM_MINMAX, -1, cv:: Mat());
+
+		histograms.histograms[i] = r_hist;
 
 		//cv::namedWindow("name");
 		//cv::imshow("name", image);
@@ -475,7 +509,7 @@ void PolyReductor::Renderer::ModelForReduction::removeVertex()
 	vertices.erase(vertices.begin() + forRemove->id);
 	//std::cout << "After Remove\n";
 
-	//All neighbor has deleting vertex, and we must delete it from list of neighbor vertices.
+	//Neighbors of erasing vetex contain this vertex. Must be deleting from nighbor list of all neighbor.?????
 	/*for (auto n : forRemove->neighbor)
 	{
 
@@ -503,7 +537,7 @@ void PolyReductor::Renderer::ModelForReduction::removeVertex()
 		forRemove->candidate->neighbor.erase(remNeigbor);
 	}*/
 
-	//Trianges are containing deleting vertex are erasing.
+	//Erase triangles which contain of erasing vertex
 	while (true)
 	{
 		auto remTri = std::find_if(std::begin(triangles), std::end(triangles), [&](std::shared_ptr<Triangle> t) { return (t->hasVertex(forRemove) && t->hasVertex(forRemove->candidate)); });

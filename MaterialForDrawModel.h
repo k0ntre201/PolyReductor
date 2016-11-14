@@ -7,7 +7,7 @@
 
 /*
  *Class for drawing the objec in material from MaterialLibary file.
- *This class use Shader class from MyEngine namespace. This class is implements by Sylwester Mróz.
+ *This class use Shader class from MyEngine namespace.
 */
 
 namespace PolyReductor

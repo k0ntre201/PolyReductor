@@ -7,11 +7,12 @@ using namespace Renderer;
 
 ShaderGlsl::ShaderGlsl()
 {
-	program = glCreateProgram();
+	program = glCreateProgram();//create shader program
 }
 
 ShaderGlsl::~ShaderGlsl()
 {
+	//clean all shaders and program
 	for (auto& x : shaders)
 		glDeleteShader(x);
 	if (glIsProgram(program))
@@ -48,6 +49,7 @@ void ShaderGlsl::loadEvaluationTesselationShader(const char * filename)
 
 void ShaderGlsl::attachAllShader()
 {
+	//attach all shaders, link to program and validate this program
 	for (auto& x : shaders)
 		glAttachShader(program, x);
 	linkProgram();
@@ -56,6 +58,7 @@ void ShaderGlsl::attachAllShader()
 
 std::string ShaderGlsl::readShader(const char * filename)
 {
+	//read shader from file
 	this->filename = filename;
 	std::string shadersource;
 	std::ifstream file;
@@ -77,6 +80,7 @@ std::string ShaderGlsl::readShader(const char * filename)
 
 void ShaderGlsl::checkShaderError(GLuint & sh)
 {
+	//return compilation log, when somthing is wrong
 	GLint is_compiled = GL_TRUE;
 	glGetShaderiv(sh, GL_COMPILE_STATUS, &is_compiled);
 	if (is_compiled == GL_FALSE)
@@ -93,21 +97,23 @@ void ShaderGlsl::checkShaderError(GLuint & sh)
 
 GLuint ShaderGlsl::loadShader(const char * filename, GLenum mode)
 {
+	//load, compile and get error log, when something is wrong in shader.
+	//Use specific enum mode to direct shader type in creating shader function.
 	std::string shcourc = readShader(filename);
 	const char* shadersource = shcourc.c_str();
 	GLuint sh = glCreateShader(mode);
 	glShaderSource(sh, 1, &shadersource, nullptr);
 	glCompileShader(sh);
-
 	checkShaderError(sh);
 	return sh;
 }
 
 void ShaderGlsl::linkProgram()
 {
+	//linkk program after attached all shaders
 	glLinkProgram(program);
 	GLint islinked;
-	glGetProgramiv(program, GL_LINK_STATUS, &islinked);
+	glGetProgramiv(program, GL_LINK_STATUS, &islinked);//check that program is linked
 	if (islinked == GL_FALSE)
 	{
 		checkLinkedProgramError();
@@ -119,6 +125,7 @@ void ShaderGlsl::linkProgram()
 
 void ShaderGlsl::checkLinkedProgramError()
 {
+	//return log about linking of program when something is wrong
 	GLint length{ 0 };
 	glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);
 	std::string text;
@@ -129,9 +136,9 @@ void ShaderGlsl::checkLinkedProgramError()
 
 void ShaderGlsl::validateProgram()
 {
+	//validate program with attached shaders and linked program
 	glValidateProgram(program);
 	checkValidateProgramError();
-
 }
 
 void ShaderGlsl::checkValidateProgramError()
@@ -140,6 +147,7 @@ void ShaderGlsl::checkValidateProgramError()
 	glGetProgramiv(program, GL_VALIDATE_STATUS, &status);
 	if (status == GL_FALSE)
 	{
+		//if validate had mistakes, get log info and print to console
 		std::cout << "Bad validation \n";
 		GLint length;
 		glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length);

@@ -1,20 +1,44 @@
-﻿  OpenGLEngine.cpp
+﻿  ModelForReduction.cpp
 d:\sylwek\polyreductor\modelforreduction.h(71): warning C4553: '==': operator has no effect; did you intend '='?
 d:\sylwek\polyreductor\modelforreduction.h(73): warning C4553: '==': operator has no effect; did you intend '='?
 d:\sylwek\polyreductor\modelforreduction.h(75): warning C4553: '==': operator has no effect; did you intend '='?
-d:\sylwek\polyreductor\mouseglfw.h(48): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-  d:\sylwek\polyreductor\openglengine.cpp(131): note: see reference to function template instantiation 'T MyEngine::Device::MouseGlfw::getCursorPosition<glm::ivec2>(void)' being compiled
+d:\sylwek\polyreductor\modelforreduction.cpp(41): warning C4018: '<': signed/unsigned mismatch
+d:\sylwek\polyreductor\modelforreduction.cpp(62): warning C4018: '<': signed/unsigned mismatch
+d:\sylwek\polyreductor\modelforreduction.cpp(93): warning C4018: '<': signed/unsigned mismatch
+d:\sylwek\polyreductor\modelforreduction.cpp(171): warning C4018: '<': signed/unsigned mismatch
+d:\sylwek\polyreductor\modelforreduction.cpp(181): warning C4018: '<': signed/unsigned mismatch
+d:\sylwek\polyreductor\modelforreduction.cpp(236): warning C4018: '>': signed/unsigned mismatch
+d:\sylwek\polyreductor\modelforreduction.cpp(299): warning C4018: '<': signed/unsigned mismatch
+d:\sylwek\polyreductor\modelforreduction.cpp(425): warning C4018: '<': signed/unsigned mismatch
+d:\sylwek\polyreductor\modelforreduction.cpp(432): warning C4018: '<': signed/unsigned mismatch
+d:\sylwek\polyreductor\modelforreduction.cpp(438): warning C4018: '<': signed/unsigned mismatch
+d:\sylwek\polyreductor\modelforreduction.cpp(526): warning C4018: '<': signed/unsigned mismatch
+d:\sylwek\polyreductor\modelforreduction.cpp(571): warning C4018: '<': signed/unsigned mismatch
+d:\sylwek\polyreductor\modelforreduction.cpp(626): warning C4018: '<': signed/unsigned mismatch
+d:\sylwek\polyreductor\modelforreduction.cpp(655): warning C4018: '<': signed/unsigned mismatch
+d:\sylwek\polyreductor\myvertex.h(50): warning C4018: '<': signed/unsigned mismatch
+  d:\sylwek\polyreductor\modelforreduction.cpp(402): note: see reference to function template instantiation 'size_t MyVector<std::shared_ptr<PolyReductor::Renderer::ModelForReduction::Vertex>>::findElement<PolyReductor::Renderer::ModelForReduction::addNeigbhod::<lambda_1325923eeb64ed6b83860d8e86f2a334>>(F)' being compiled
           with
           [
-              T=glm::ivec2
+              F=PolyReductor::Renderer::ModelForReduction::addNeigbhod::<lambda_1325923eeb64ed6b83860d8e86f2a334>
           ]
-d:\sylwek\polyreductor\mouseglfw.h(49): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-d:\sylwek\polyreductor\mouseglfw.h(39): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-  d:\sylwek\polyreductor\openglengine.cpp(144): note: see reference to function template instantiation 'void MyEngine::Device::MouseGlfw::setCursorPosition<glm::ivec2>(const T &)' being compiled
+  d:\sylwek\polyreductor\modelforreduction.cpp(402): note: see reference to function template instantiation 'size_t MyVector<std::shared_ptr<PolyReductor::Renderer::ModelForReduction::Vertex>>::findElement<PolyReductor::Renderer::ModelForReduction::addNeigbhod::<lambda_1325923eeb64ed6b83860d8e86f2a334>>(F)' being compiled
           with
           [
-              T=glm::ivec2
+              F=PolyReductor::Renderer::ModelForReduction::addNeigbhod::<lambda_1325923eeb64ed6b83860d8e86f2a334>
           ]
-d:\sylwek\polyreductor\mouseglfw.h(40): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+d:\sylwek\polyreductor\myvertex.h(110): warning C4018: '<': signed/unsigned mismatch
+  d:\sylwek\polyreductor\modelforreduction.cpp(528): note: see reference to function template instantiation 'void MyVector<std::shared_ptr<PolyReductor::Renderer::ModelForReduction::Vertex>>::eraseElement<PolyReductor::Renderer::ModelForReduction::removeVertex::<lambda_53368ad5ea1618a4c77000518336cd49>>(F)' being compiled
+          with
+          [
+              F=PolyReductor::Renderer::ModelForReduction::removeVertex::<lambda_53368ad5ea1618a4c77000518336cd49>
+          ]
+  d:\sylwek\polyreductor\modelforreduction.cpp(528): note: see reference to function template instantiation 'void MyVector<std::shared_ptr<PolyReductor::Renderer::ModelForReduction::Vertex>>::eraseElement<PolyReductor::Renderer::ModelForReduction::removeVertex::<lambda_53368ad5ea1618a4c77000518336cd49>>(F)' being compiled
+          with
+          [
+              F=PolyReductor::Renderer::ModelForReduction::removeVertex::<lambda_53368ad5ea1618a4c77000518336cd49>
+          ]
+d:\sylwek\polyreductor\myvertex.h(131): warning C4018: '<': signed/unsigned mismatch
+d:\sylwek\polyreductor\myvertex.h(140): warning C4018: '<': signed/unsigned mismatch
   PolyReductor.vcxproj -> D:\Sylwek\PolyReductor\Debug\PolyReductor.exe
   PolyReductor.vcxproj -> D:\Sylwek\PolyReductor\Debug\PolyReductor.pdb (Partial PDB)

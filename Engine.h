@@ -1,3 +1,8 @@
+/*
+Interface of engine.
+Contain mouse, keyboard and monitor devices
+*/
+
 #ifndef ENGINE_H
 #define ENGINE_H
 

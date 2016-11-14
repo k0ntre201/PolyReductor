@@ -30,7 +30,7 @@ namespace PolyReductor
 				int id;
 				MyVector<std::shared_ptr<Vertex>> neighbor;
 				MyVector<std::shared_ptr<Triangle>> face;
-				float cost;
+				float cost;//cost of deleting this vertex
 				std::shared_ptr<Vertex> candidate;
 
 				void RemoveIfNonNeighbor();
@@ -86,8 +86,8 @@ namespace PolyReductor
 
 			void prepareModelToDraw();
 
-			void reduce(int numberOfVertices);
-			void draw(GLuint shaderProgram, const glm::mat4& M, const glm::mat4& V, const glm::mat4& P);
+			void reduce(int numberOfVertices);//How many vertices must be not reduced from model.
+			void draw(GLuint shaderProgram, const glm::mat4& M, const glm::mat4& V, const glm::mat4& P);//draw model
 
 			void createHistograms(GLuint shaderProgram, std::shared_ptr<MyEngine::Renderer::Transform> transform, const glm::mat4& V, const glm::mat4& P, int width, int height);
 
